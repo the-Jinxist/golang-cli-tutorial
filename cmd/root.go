@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 }
 
 var shout = &cobra.Command{
-	Use:     "shout",
+	Use:     "ping",
 	Short:   "Tell the cli to shout your name",
 	Example: "golang-cli-tutorial shout Favour",
 	Args:    cobra.ExactArgs(1),
@@ -38,6 +38,17 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(taskCommand)
+
+	repo := GetRepo()
+	taskCmd := getTaskCommand(repo)
+	addTaskCmd := addTaskCommand(repo)
+
+	taskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
+
+	addTaskCmd.PersistentFlags().StringP("name", "n", "", "specify the name of your task")
+	addTaskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
+
+	rootCmd.AddCommand(taskCmd)
+	rootCmd.AddCommand(addTaskCmd)
 	rootCmd.AddCommand(shout)
 }

@@ -1,16 +1,19 @@
 package config
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"path/filepath"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/jackc/pgconn"
+	_ "github.com/jackc/pgx/v4"
+	_ "github.com/jackc/pgx/v4/stdlib"
+
+	"github.com/jmoiron/sqlx"
 	gap "github.com/muesli/go-app-paths"
 )
 
-var db *sql.DB
+var db *sqlx.DB
 
 func setupPath() string {
 	// get XDG paths
@@ -34,12 +37,22 @@ func setupPath() string {
 
 // openDB opens a SQLite database and stores that database in our special spot.
 func InitDB() {
-	res, err := sql.Open("sqlite3", filepath.Join(setupPath(), "tasks.db"))
+	res, err := sqlx.Open("sqlite3", filepath.Join(setupPath(), "tasks.db"))
 	if err != nil {
-		log.Fatalf("error while opening db")
+		log.Fatalf("error while opening db: %s", err)
 	}
 
+	setupDb(res)
+
 	db = res
+}
+
+func setupDb(res *sqlx.DB) {
+	if _, err := res.Query("SELECT * FROM tasks"); err != nil {
+		if _, err := db.Exec(`CREATE TABLE "tasks" ( "id" INTEGER, "name" TEXT NOT NULL, "project" TEXT, "status" TEXT, "created_at" DATETIME, "updated_at" DATETIME, PRIMARY KEY("id" AUTOINCREMENT))`); err != nil {
+			log.Fatalf("error while setting up db: %s", err)
+		}
+	}
 }
 
 func initTaskDir(path string) error {
@@ -52,6 +65,6 @@ func initTaskDir(path string) error {
 	return nil
 }
 
-func GetDB() *sql.DB {
+func GetDB() *sqlx.DB {
 	return db
 }
