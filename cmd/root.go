@@ -14,7 +14,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "golang-cli-tutorial",
+	Use:   "todo",
 	Short: "A brief description of your application",
 	Run:   func(cmd *cobra.Command, args []string) {},
 }
@@ -39,21 +39,31 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.AddCommand(shout)
 
 	db := config.GetDB()
-
 	repo := GetRepo(db)
 
 	taskCmd := getTaskCommand(repo)
 	addTaskCmd := addTaskCommand(repo)
+	finishTaskCmd := finishTaskCommand(repo)
+	deleteTaskCmd := deleteTaskCommand(repo)
 
 	taskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
+	taskCmd.Flags().StringP("status", "s", "", "filter project by status")
+	rootCmd.AddCommand(taskCmd)
 
 	addTaskCmd.Flags().StringP("name", "n", "", "specify the name of your task (required)")
 	addTaskCmd.MarkFlagRequired("name")
 	addTaskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
-
-	rootCmd.AddCommand(taskCmd)
 	rootCmd.AddCommand(addTaskCmd)
-	rootCmd.AddCommand(shout)
+
+	finishTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
+	finishTaskCmd.MarkFlagRequired("id")
+	rootCmd.AddCommand(finishTaskCmd)
+
+	deleteTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
+	deleteTaskCmd.MarkFlagRequired("id")
+	rootCmd.AddCommand(deleteTaskCmd)
+
 }

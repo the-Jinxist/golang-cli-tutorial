@@ -17,9 +17,10 @@ func GetRepo(db *sqlx.DB) repository {
 	}
 }
 
-func (t *repository) getTasks(project string) ([]Task, error) {
+func (t *repository) getTasks(project, _ string) ([]Task, error) {
 	var tasks []Task
 
+	//TODO: Need to add sql query builder to add status to query dynamically
 	query := `SELECT * FROM tasks`
 	if len(project) > 3 {
 		query += fmt.Sprintf(` WHERE project = "%s"`, project)
@@ -28,14 +29,16 @@ func (t *repository) getTasks(project string) ([]Task, error) {
 	return tasks, err
 }
 
-func (t *repository) finishTask(id int) error {
-	_, err := t.db.Exec(`update tasks set status = $1 where id = $2`, "finished", id)
-	return err
+func (t *repository) finishTask(id int) (string, error) {
+	var name string
+	err := t.db.QueryRow(`update tasks set status = $1 where id = $2 returning name`, "finished", id).Scan(name)
+	return name, err
 }
 
-func (t *repository) deleteTask(id int) error {
-	_, err := t.db.Exec(`delete tasks where id = $2`, "finished", id)
-	return err
+func (t *repository) deleteTask(id int) (string, error) {
+	var name string
+	err := t.db.QueryRow(`delete tasks where id = $2 returning name`, "finished", id).Scan(name)
+	return name, err
 }
 
 func (t *repository) createTask(task Task) error {
