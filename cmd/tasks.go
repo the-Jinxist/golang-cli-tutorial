@@ -13,12 +13,16 @@ func getTaskCommand(repo repository) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			project, _ := cmd.Flags().GetString("project")
+			if project != "" && len(project) <= 3 {
+				return fmt.Errorf("project name must be more than 3")
+			}
 			tasks, err := repo.getTasks(project)
 			if err != nil {
 				return err
 			}
 
-			fmt.Print(tasks)
+			table := setupTable(tasks)
+			fmt.Println(table)
 
 			return nil
 		},
@@ -33,8 +37,11 @@ func addTaskCommand(repo repository) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			project, _ := cmd.Flags().GetString("project")
-			name, _ := cmd.Flags().GetString("name")
+			if project != "" && len(project) <= 3 {
+				return fmt.Errorf("project name must be more than 3")
+			}
 
+			name, _ := cmd.Flags().GetString("name")
 			task := Task{
 				Name:    name,
 				Project: project,

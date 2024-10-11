@@ -36,7 +36,7 @@ func setupPath() string {
 }
 
 // openDB opens a SQLite database and stores that database in our special spot.
-func InitDB() {
+func initDB() {
 	res, err := sqlx.Open("sqlite3", filepath.Join(setupPath(), "tasks.db"))
 	if err != nil {
 		log.Fatalf("error while opening db: %s", err)
@@ -49,7 +49,7 @@ func InitDB() {
 
 func setupDb(res *sqlx.DB) {
 	if _, err := res.Query("SELECT * FROM tasks"); err != nil {
-		if _, err := db.Exec(`CREATE TABLE "tasks" ( "id" INTEGER, "name" TEXT NOT NULL, "project" TEXT, "status" TEXT, "created_at" DATETIME, "updated_at" DATETIME, PRIMARY KEY("id" AUTOINCREMENT))`); err != nil {
+		if _, err := res.Exec(`CREATE TABLE "tasks" ( "id" INTEGER, "name" TEXT NOT NULL, "project" TEXT, "status" TEXT, "created_at" DATETIME, "updated_at" DATETIME, PRIMARY KEY("id" AUTOINCREMENT))`); err != nil {
 			log.Fatalf("error while setting up db: %s", err)
 		}
 	}
@@ -66,5 +66,9 @@ func initTaskDir(path string) error {
 }
 
 func GetDB() *sqlx.DB {
+	if db == nil {
+		initDB()
+	}
+
 	return db
 }

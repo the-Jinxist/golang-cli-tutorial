@@ -2,18 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/the-Jinxist/golang-cli-tutorial/config"
 )
 
 type repository struct {
 	db *sqlx.DB
 }
 
-func GetRepo() repository {
+func GetRepo(db *sqlx.DB) repository {
 	return repository{
-		db: config.GetDB(),
+		db: db,
 	}
 }
 
@@ -22,7 +22,7 @@ func (t *repository) getTasks(project string) ([]Task, error) {
 
 	query := `SELECT * FROM tasks`
 	if len(project) > 3 {
-		query += fmt.Sprintf(`WHERE project = %s`, project)
+		query += fmt.Sprintf(` WHERE project = "%s"`, project)
 	}
 	err := t.db.Select(&tasks, query)
 	return tasks, err
@@ -40,11 +40,12 @@ func (t *repository) deleteTask(id int) error {
 
 func (t *repository) createTask(task Task) error {
 
-	if task.Project != "" {
+	if task.Project == "" {
 		task.Project = "default"
 	}
 
+	now := time.Now()
 	_, err := t.db.Exec(`insert into tasks (name, project, status, created_at, updated_at)
-		values ($1, $2, $3, now(), now())`, task.Name, task.Project, task.Status)
+		values ($1, $2, $3, $4, $5)`, task.Name, task.Project, task.Status, now, now)
 	return err
 }

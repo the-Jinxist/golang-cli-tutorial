@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/the-Jinxist/golang-cli-tutorial/config"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -39,13 +40,17 @@ func Execute() {
 
 func init() {
 
-	repo := GetRepo()
+	db := config.GetDB()
+
+	repo := GetRepo(db)
+
 	taskCmd := getTaskCommand(repo)
 	addTaskCmd := addTaskCommand(repo)
 
 	taskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
 
-	addTaskCmd.PersistentFlags().StringP("name", "n", "", "specify the name of your task")
+	addTaskCmd.Flags().StringP("name", "n", "", "specify the name of your task (required)")
+	addTaskCmd.MarkFlagRequired("name")
 	addTaskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
 
 	rootCmd.AddCommand(taskCmd)
