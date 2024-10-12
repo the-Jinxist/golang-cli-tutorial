@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Favour Olukayode <nerosilva522@gmail.com>
 */
 package cmd
 
@@ -14,15 +14,16 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "todo",
-	Short: "A brief description of your application",
-	Run:   func(cmd *cobra.Command, args []string) {},
+	Use:     "todo",
+	Aliases: []string{"todo"},
+	Short:   "A brief description of your application",
+	Run:     func(cmd *cobra.Command, args []string) {},
 }
 
 var shout = &cobra.Command{
 	Use:     "ping",
 	Short:   "Tell the cli to shout your name",
-	Example: "golang-cli-tutorial shout Favour",
+	Example: "todo shout Favour",
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s!!!!!!!!!!", strings.ToUpper(args[0]))
