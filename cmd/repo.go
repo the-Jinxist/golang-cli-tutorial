@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -26,19 +27,47 @@ func (t *repository) getTasks(project, _ string) ([]Task, error) {
 		query += fmt.Sprintf(` WHERE project = "%s"`, project)
 	}
 	err := t.db.Select(&tasks, query)
+	if err == sql.ErrNoRows {
+		return nil, fmt.Errorf("you have not created any tasks yet. Use `add --name` to create a new task")
+	}
+
 	return tasks, err
 }
 
 func (t *repository) finishTask(id int) (string, error) {
 	var name string
-	err := t.db.QueryRow(`update tasks set status = $1 where id = $2 returning name`, "finished", id).Scan(name)
+	err := t.db.QueryRow(`update tasks set status = $1, updated_at = $2 where id = $3 returning name`, "finished", time.Now(), id).Scan(&name)
+	if err == sql.ErrNoRows {
+		return name, fmt.Errorf("no tasks with id: %d", id)
+	}
+	return name, err
+}
+
+func (t *repository) startTask(id int) (string, error) {
+	var name string
+	err := t.db.QueryRow(`update tasks set status = $1, updated_at = $2 where id = $3 returning name`, "in_progress", time.Now(), id).Scan(&name)
+	if err == sql.ErrNoRows {
+		return name, fmt.Errorf("no tasks with id: %d", id)
+	}
 	return name, err
 }
 
 func (t *repository) deleteTask(id int) (string, error) {
 	var name string
-	err := t.db.QueryRow(`delete tasks where id = $2 returning name`, "finished", id).Scan(name)
+	err := t.db.QueryRow(`delete from tasks where id = $1 returning name`, id).Scan(&name)
+	if err == sql.ErrNoRows {
+		return name, fmt.Errorf("no tasks with id: %d", id)
+	}
 	return name, err
+}
+
+func (t *repository) clearAllTasks() error {
+
+	_, err := t.db.Exec(`delete from tasks`)
+	if err == sql.ErrNoRows {
+		return nil
+	}
+	return err
 }
 
 func (t *repository) createTask(task Task) error {

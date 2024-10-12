@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -57,10 +58,10 @@ func setupTable(tasks []Task) *table.Table {
 				return OddRowStyle
 			}
 		}).
-		Headers("NAME", "STATUS", "PROJECT", "TIME OF CREATION")
+		Headers("ID", "NAME", "STATUS", "PROJECT", "TIME OF CREATION")
 
 	for _, task := range tasks {
-		table.Row(strings.ToUpper(task.Name), task.Status, task.Project, task.CreatedAt.Local().String())
+		table.Row(strconv.Itoa(task.ID), strings.ToUpper(task.Name), task.Status, task.Project, task.CreatedAt.Local().String())
 	}
 
 	return table

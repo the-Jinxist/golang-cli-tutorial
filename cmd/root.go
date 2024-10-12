@@ -17,7 +17,9 @@ var rootCmd = &cobra.Command{
 	Use:     "todo",
 	Aliases: []string{"todo"},
 	Short:   "A brief description of your application",
-	Run:     func(cmd *cobra.Command, args []string) {},
+	Run: func(cmd *cobra.Command, args []string) {
+
+	},
 }
 
 var shout = &cobra.Command{
@@ -49,13 +51,13 @@ func init() {
 	addTaskCmd := addTaskCommand(repo)
 	finishTaskCmd := finishTaskCommand(repo)
 	deleteTaskCmd := deleteTaskCommand(repo)
+	startTaskCmd := startTaskCommand(repo)
+	clearTaskCmd := clearTaskCoomands(repo)
 
 	taskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
 	taskCmd.Flags().StringP("status", "s", "", "filter project by status")
 	rootCmd.AddCommand(taskCmd)
 
-	addTaskCmd.Flags().StringP("name", "n", "", "specify the name of your task (required)")
-	addTaskCmd.MarkFlagRequired("name")
 	addTaskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
 	rootCmd.AddCommand(addTaskCmd)
 
@@ -67,4 +69,9 @@ func init() {
 	deleteTaskCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(deleteTaskCmd)
 
+	startTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
+	startTaskCmd.MarkFlagRequired("id")
+	rootCmd.AddCommand(startTaskCmd)
+
+	rootCmd.AddCommand(clearTaskCmd)
 }
