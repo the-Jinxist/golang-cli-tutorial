@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -49,7 +51,7 @@ func addTaskCommand(repo repository) *cobra.Command {
 			}
 
 			//TODO: ADD SUPPORT FOR MUTLIPLE LINE TASK NAMES
-			name := args[0]
+			name := strings.Join(args, " ")
 			task := Task{
 				Name:    name,
 				Project: project,
@@ -61,7 +63,8 @@ func addTaskCommand(repo repository) *cobra.Command {
 				return err
 			}
 
-			fmt.Print("task added successfully\n")
+			res := bannerRes("task added successfully", "", "")
+			fmt.Println(res)
 
 			return nil
 		},
@@ -73,18 +76,21 @@ func finishTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
 		Use:   "finish",
 		Short: "This is command is used to mark a task as finished",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			id, _ := cmd.Flags().GetInt("id")
-			if id < 0 {
-				return fmt.Errorf("invalid")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
 			}
+
 			taskName, err := repo.finishTask(id)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("%s is marked as finished!\n", taskName)
+			res := bannerRes(fmt.Sprintf("[%s] is marked as finished!", taskName), "", "")
+			fmt.Println(res)
 
 			return nil
 		},
@@ -96,18 +102,21 @@ func deleteTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
 		Use:   "delete",
 		Short: "This is command is used to mark a task as finished",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			id, _ := cmd.Flags().GetInt("id")
-			if id < 0 {
-				return fmt.Errorf("invalid")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
 			}
+
 			taskName, err := repo.deleteTask(id)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("%s is deleted!\n", taskName)
+			res := bannerRes(fmt.Sprintf("[%s] is deleted!", taskName), "", "#FF5733")
+			fmt.Println(res)
 
 			return nil
 		},
@@ -119,18 +128,20 @@ func startTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
 		Use:   "start",
 		Short: "This is command is used to mark a task as in progress",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			id, _ := cmd.Flags().GetInt("id")
-			if id < 0 {
-				return fmt.Errorf("invalid")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
 			}
 			taskName, err := repo.startTask(id)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("%s is started!\n", taskName)
+			res := bannerRes(fmt.Sprintf("[%s] is started!", taskName), "", "#40B5AD")
+			fmt.Println(res)
 
 			return nil
 		},
@@ -149,7 +160,8 @@ func clearTaskCoomands(repo repository) *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("All tasks have been cleared successfully!\n")
+			res := bannerRes("All tasks have been cleared successfully", "", "")
+			fmt.Println(res)
 
 			return nil
 		},

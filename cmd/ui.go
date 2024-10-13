@@ -32,13 +32,13 @@ func setupList(tasks []Task) *list.List {
 }
 
 func setupTable(tasks []Task) *table.Table {
-	HeaderStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("99")).Width(15).Height(20).AlignHorizontal(lipgloss.Center)
-	EvenRowStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#808080")).Padding(2).AlignHorizontal(lipgloss.Center)
-	OddRowStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#A9A9A9")).Padding(2).AlignHorizontal(lipgloss.Center)
+	HeaderStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#89CFF0")).Width(15).Height(20).AlignHorizontal(lipgloss.Center)
+	EvenRowStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#808080")).Padding(1, 2).AlignHorizontal(lipgloss.Center)
+	OddRowStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("#A9A9A9")).Padding(1, 2).AlignHorizontal(lipgloss.Center)
 
 	table := table.New().
 		Border(lipgloss.NormalBorder()).
-		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("99")).BorderBottom(true)).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("#89CFF0")).BorderBottom(true)).
 		BorderBottom(true).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			switch {
@@ -65,4 +65,21 @@ func setupTable(tasks []Task) *table.Table {
 	}
 
 	return table
+}
+
+func bannerRes(msg, textColor, backgroundColor string) string {
+
+	bgColor := "#89CFF0"
+	if backgroundColor != "" {
+		bgColor = backgroundColor
+	}
+
+	txtColor := "#ffffff"
+	if textColor != "" {
+		txtColor = backgroundColor
+	}
+
+	style := lipgloss.NewStyle().Padding(1, 2).Foreground(lipgloss.Color(txtColor)).Background(lipgloss.Color(bgColor))
+	res := style.Render(msg)
+	return res
 }

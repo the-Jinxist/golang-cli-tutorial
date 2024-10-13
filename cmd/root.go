@@ -14,7 +14,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:     "todo",
+	Use:     "taska",
 	Aliases: []string{"todo"},
 	Short:   "A brief description of your application",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -35,6 +35,7 @@ var shout = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	rootCmd.Use = "taksa"
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -61,17 +62,8 @@ func init() {
 	addTaskCmd.Flags().StringP("project", "p", "", "specify the project of this task")
 	rootCmd.AddCommand(addTaskCmd)
 
-	finishTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
-	finishTaskCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(finishTaskCmd)
-
-	deleteTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
-	deleteTaskCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(deleteTaskCmd)
-
-	startTaskCmd.Flags().IntP("id", "i", -1, "specify the id of the task (required)")
-	startTaskCmd.MarkFlagRequired("id")
 	rootCmd.AddCommand(startTaskCmd)
-
 	rootCmd.AddCommand(clearTaskCmd)
 }
