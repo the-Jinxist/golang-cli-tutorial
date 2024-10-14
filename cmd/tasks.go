@@ -10,8 +10,9 @@ import (
 
 func getTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "tasks",
-		Short: "This is a list of all your tasks. You can filter by project with the \"project\" flag",
+		Use:     "tasks",
+		Short:   "This is a list of all your tasks. You can filter by project with the \"project\" flag",
+		Example: "golang-cli-tutorial tasks -s <status> -p <project>",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			project, _ := cmd.Flags().GetString("project")
@@ -40,9 +41,10 @@ func getTaskCommand(repo repository) *cobra.Command {
 
 func addTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "add",
-		Short: "This is command is used to add tasks",
-		Args:  cobra.MaximumNArgs(20),
+		Use:     "add",
+		Short:   "This is command is used to add tasks",
+		Example: "golang-cli-tutorial add <task name> -p <project>",
+		Args:    cobra.MaximumNArgs(20),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			project, _ := cmd.Flags().GetString("project")
@@ -74,9 +76,10 @@ func addTaskCommand(repo repository) *cobra.Command {
 
 func finishTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "finish",
-		Short: "This is command is used to mark a task as finished",
-		Args:  cobra.ExactArgs(1),
+		Use:     "finish",
+		Short:   "This is command is used to mark a task as finished",
+		Example: "golang-cli-tutorial finish <id>",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			id, err := strconv.Atoi(args[0])
@@ -100,9 +103,10 @@ func finishTaskCommand(repo repository) *cobra.Command {
 
 func deleteTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "delete",
-		Short: "This is command is used to mark a task as finished",
-		Args:  cobra.ExactArgs(1),
+		Use:     "delete",
+		Short:   "This is command is used to delete a task",
+		Example: "golang-cli-tutorial delete <id>",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			id, err := strconv.Atoi(args[0])
@@ -126,9 +130,10 @@ func deleteTaskCommand(repo repository) *cobra.Command {
 
 func startTaskCommand(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "start",
-		Short: "This is command is used to mark a task as in progress",
-		Args:  cobra.ExactArgs(1),
+		Use:     "start",
+		Short:   "This is command is used to mark a task as in progress",
+		Example: "golang-cli-tutorial start <id>",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			id, err := strconv.Atoi(args[0])
@@ -151,8 +156,9 @@ func startTaskCommand(repo repository) *cobra.Command {
 
 func clearTaskCoomands(repo repository) *cobra.Command {
 	taskCommand := &cobra.Command{
-		Use:   "clear_all",
-		Short: "This is command is used to mark a task as finished",
+		Use:     "clear_all",
+		Short:   "This is command is used to mark a task as finished",
+		Example: "golang-cli-tutorial clear_all",
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			err := repo.clearAllTasks()

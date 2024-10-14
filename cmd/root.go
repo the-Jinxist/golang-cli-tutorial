@@ -25,7 +25,7 @@ var rootCmd = &cobra.Command{
 var shout = &cobra.Command{
 	Use:     "ping",
 	Short:   "Tell the cli to shout your name",
-	Example: "todo shout Favour",
+	Example: "taska shout Favour",
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s!!!!!!!!!!", strings.ToUpper(args[0]))
